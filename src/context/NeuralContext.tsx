@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { ViewMode, TechNode } from '../types';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { ViewMode, TechNode, CoreState } from '../types';
 import { NODES_DATA } from '../data/nodes';
 import { soundManager } from '../services/soundService';
 
@@ -8,6 +8,7 @@ interface NeuralContextType {
   selectedNode: TechNode | null;
   selectedLayerId: string | null;
   viewMode: ViewMode;
+  coreState: CoreState;
   isMapOpen: boolean;
   isCommandOpen: boolean;
   isBootComplete: boolean;
@@ -17,6 +18,7 @@ interface NeuralContextType {
   easterEggType: 'root_access' | 'human_404' | null;
   cameraFocusTarget: [number, number, number] | null;
   cameraDistance: number;
+  isInspectorOpen: boolean;
   
   // Actions
   setActiveNode: (id: string | null) => void;
@@ -27,6 +29,7 @@ interface NeuralContextType {
   toggleCommand: (open?: boolean) => void;
   toggleSound: () => void;
   toggleReducedMotion: () => void;
+  toggleInspector: (open?: boolean) => void;
   triggerEasterEgg: (type: 'root_access' | 'human_404' | null) => void;
   returnToCore: () => void;
   completeBoot: () => void;
@@ -47,14 +50,18 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [isReducedMotion, setIsReducedMotion] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [easterEggType, setEasterEggType] = useState<'root_access' | 'human_404' | null>(null);
-  const [cameraFocusTarget, setCameraFocusTarget] = useState<[number, number, number] | null>(null);
-  const [cameraDistance, setCameraDistance] = useState<number>(14);
+  const [cameraFocusTarget, setCameraFocusTarget] = useState<[number, number, number] | null>([0, 0, 0]);
+  const [cameraDistance, setCameraDistance] = useState<number>(13.5);
+  const [isInspectorOpen, setIsInspectorOpen] = useState<boolean>(true);
 
   // Responsive mobile detection
   useEffect(() => {
     const checkMobile = () => {
       const mobileQuery = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
       setIsMobile(mobileQuery);
+      if (mobileQuery) {
+        setCameraDistance(15.5);
+      }
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
@@ -70,7 +77,16 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Keyboard shortcut listener (Cmd+K / Ctrl+K)
+  // Core state derivation (Section 05)
+  const coreState = useMemo<CoreState>(() => {
+    if (easterEggType === 'root_access') return 'root_access';
+    if (selectedNode) return 'processing';
+    if (activeNode && activeNode !== 'core') return 'observing';
+    if (activeNode === 'core') return 'connected';
+    return 'idle';
+  }, [easterEggType, selectedNode, activeNode]);
+
+  // Keyboard shortcut listener (Cmd+K / Ctrl+K, Esc, numbers)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -81,13 +97,17 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (e.key === 'Escape') {
         if (isCommandOpen) setIsCommandOpen(false);
         else if (isMapOpen) setIsMapOpen(false);
-        else if (selectedNode) selectNodeById(null);
-        else if (easterEggType) setEasterEggType(null);
+        else if (selectedNode) {
+          setSelectedNodeState(null);
+          setCameraFocusTarget([0, 0, 0]);
+          setCameraDistance(isMobile ? 15.5 : 13.5);
+          soundManager.playWarp();
+        } else if (easterEggType) setEasterEggType(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isCommandOpen, isMapOpen, selectedNode, easterEggType]);
+  }, [isCommandOpen, isMapOpen, selectedNode, easterEggType, isMobile]);
 
   const setActiveNode = useCallback((id: string | null) => {
     setActiveNodeState(id);
@@ -100,7 +120,7 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!id) {
       setSelectedNodeState(null);
       setCameraFocusTarget([0, 0, 0]);
-      setCameraDistance(14);
+      setCameraDistance(isMobile ? 15.5 : 13.5);
       soundManager.playWarp();
       return;
     }
@@ -108,7 +128,7 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (id === 'core') {
       setSelectedNodeState(null);
       setCameraFocusTarget([0, 0, 0]);
-      setCameraDistance(6);
+      setCameraDistance(isMobile ? 6.5 : 5.8);
       soundManager.playSelect();
       return;
     }
@@ -117,18 +137,18 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (node) {
       setSelectedNodeState(node);
       setCameraFocusTarget(node.position);
-      setCameraDistance(6.5);
+      setCameraDistance(isMobile ? 6.5 : 5.6);
       soundManager.playSelect();
     }
-  }, []);
+  }, [isMobile]);
 
   const returnToCore = useCallback(() => {
     setSelectedNodeState(null);
     setSelectedLayerId(null);
     setCameraFocusTarget([0, 0, 0]);
-    setCameraDistance(14);
+    setCameraDistance(isMobile ? 15.5 : 13.5);
     soundManager.playWarp();
-  }, []);
+  }, [isMobile]);
 
   const setViewMode = useCallback((mode: ViewMode) => {
     setViewModeState(mode);
@@ -138,13 +158,13 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     
     if (mode === 'system') {
       setCameraFocusTarget([0, 0, 0]);
-      setCameraDistance(14);
+      setCameraDistance(isMobile ? 15.5 : 13.5);
     } else if (mode === 'architecture') {
       setCameraFocusTarget([0, 0, 0]);
-      setCameraDistance(12);
+      setCameraDistance(isMobile ? 13.5 : 11.5);
     }
     soundManager.playSelect();
-  }, []);
+  }, [isMobile]);
 
   const toggleMap = useCallback((open?: boolean) => {
     setIsMapOpen(prev => {
@@ -176,6 +196,11 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     soundManager.playHover();
   }, []);
 
+  const toggleInspector = useCallback((open?: boolean) => {
+    setIsInspectorOpen(prev => open !== undefined ? open : !prev);
+    soundManager.playHover();
+  }, []);
+
   const triggerEasterEgg = useCallback((type: 'root_access' | 'human_404' | null) => {
     setEasterEggType(type);
     if (type) {
@@ -195,9 +220,9 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setIsMapOpen(false);
     setIsCommandOpen(false);
     setCameraFocusTarget([0, 0, 0]);
-    setCameraDistance(14);
+    setCameraDistance(isMobile ? 15.5 : 13.5);
     soundManager.playAffirmative();
-  }, []);
+  }, [isMobile]);
 
   return (
     <NeuralContext.Provider
@@ -206,6 +231,7 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         selectedNode,
         selectedLayerId,
         viewMode,
+        coreState,
         isMapOpen,
         isCommandOpen,
         isBootComplete,
@@ -215,6 +241,7 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         easterEggType,
         cameraFocusTarget,
         cameraDistance,
+        isInspectorOpen,
         setActiveNode,
         selectNodeById,
         setSelectedLayerId,
@@ -223,6 +250,7 @@ export const NeuralProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         toggleCommand,
         toggleSound,
         toggleReducedMotion,
+        toggleInspector,
         triggerEasterEgg,
         returnToCore,
         completeBoot,
@@ -241,3 +269,4 @@ export const useNeural = () => {
   }
   return context;
 };
+

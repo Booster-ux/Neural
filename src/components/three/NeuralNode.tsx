@@ -21,11 +21,15 @@ export const NeuralNode: React.FC<NeuralNodeProps> = ({ node }) => {
   const isSelected = selectedNode?.id === node.id;
   const isDirectlyActive = activeNode === node.id;
   
-  // Highlight if connected to currently active node
-  const isConnectedToActive = useMemo(() => {
-    if (!activeNode || activeNode === 'core') return false;
-    return node.connections.includes(activeNode);
-  }, [activeNode, node.connections]);
+  // Highlight if connected to currently selected/active node
+  const isConnectedToFocused = useMemo(() => {
+    const focusId = selectedNode?.id || (activeNode !== 'core' ? activeNode : null);
+    if (!focusId) return false;
+    return node.connections.includes(focusId);
+  }, [selectedNode, activeNode, node.connections]);
+
+  const hasAnySelection = !!selectedNode;
+  const isDimmed = hasAnySelection && !isSelected && !isConnectedToFocused;
 
   const baseColor = useMemo(() => new THREE.Color(node.color), [node.color]);
   const glowColor = useMemo(() => new THREE.Color(node.glowColor), [node.glowColor]);
@@ -34,28 +38,30 @@ export const NeuralNode: React.FC<NeuralNodeProps> = ({ node }) => {
     if (isReducedMotion) return;
     const time = state.clock.getElapsedTime();
 
-    // Floating drift
+    // Organic floating drift with unique phase offset per node
     if (groupRef.current) {
-      const floatOffset = Math.sin(time * 1.5 + node.position[0]) * 0.08;
-      groupRef.current.position.y = node.position[1] + floatOffset;
+      const floatY = Math.sin(time * 1.2 + node.position[0] * 1.5) * 0.07;
+      const floatX = Math.cos(time * 0.9 + node.position[2]) * 0.04;
+      groupRef.current.position.y = node.position[1] + floatY;
+      groupRef.current.position.x = node.position[0] + floatX;
     }
 
     // Outer ring rotation
     if (ringRef.current) {
-      ringRef.current.rotation.z += delta * (hovered || isSelected ? 1.2 : 0.4);
+      ringRef.current.rotation.z += delta * (isSelected ? 1.0 : hovered ? 0.8 : 0.25);
     }
 
-    // Node pulsating scale
+    // Node pulsating scale based on selection state
     if (meshRef.current) {
-      const targetScale = isSelected ? 1.35 : hovered ? 1.25 : 1.0;
-      meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), delta * 6);
+      const targetScale = isSelected ? 1.3 : hovered ? 1.2 : isConnectedToFocused ? 1.05 : isDimmed ? 0.85 : 1.0;
+      meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), delta * 5);
     }
 
     if (outerHaloRef.current) {
-      const haloScale = isSelected ? 1.6 : hovered ? 1.45 : isConnectedToActive ? 1.25 : 1.15;
-      outerHaloRef.current.scale.lerp(new THREE.Vector3(haloScale, haloScale, haloScale), delta * 5);
-      outerHaloRef.current.rotation.x = time * 0.3;
-      outerHaloRef.current.rotation.y = time * 0.4;
+      const haloScale = isSelected ? 1.55 : hovered ? 1.4 : isConnectedToFocused ? 1.2 : 1.1;
+      outerHaloRef.current.scale.lerp(new THREE.Vector3(haloScale, haloScale, haloScale), delta * 4);
+      outerHaloRef.current.rotation.x = time * 0.25;
+      outerHaloRef.current.rotation.y = time * 0.35;
     }
   });
 
@@ -81,49 +87,51 @@ export const NeuralNode: React.FC<NeuralNodeProps> = ({ node }) => {
     >
       {/* Node Core Sphere */}
       <mesh ref={meshRef}>
-        <sphereGeometry args={[0.65, 24, 24]} />
+        <sphereGeometry args={[0.58, 28, 28]} />
         <meshStandardMaterial
-          color={hovered || isSelected ? glowColor : baseColor}
+          color={isSelected || hovered ? glowColor : baseColor}
           emissive={baseColor}
-          emissiveIntensity={isSelected ? 3.0 : hovered ? 2.4 : isConnectedToActive ? 1.6 : 0.9}
-          roughness={0.25}
-          metalness={0.7}
+          emissiveIntensity={isSelected ? 2.8 : hovered ? 2.2 : isConnectedToFocused ? 1.5 : isDimmed ? 0.35 : 0.85}
+          roughness={0.2}
+          metalness={0.8}
         />
       </mesh>
 
-      {/* Orbiting Tech Ring */}
-      <mesh ref={ringRef} rotation={[Math.PI / 3, 0, 0]}>
-        <torusGeometry args={[0.95, 0.015, 12, 48]} />
+      {/* Orbiting Precision Ring */}
+      <mesh ref={ringRef} rotation={[Math.PI / 3, 0.2, 0]}>
+        <torusGeometry args={[0.88, 0.014, 12, 64]} />
         <meshStandardMaterial
           color={glowColor}
           emissive={glowColor}
-          emissiveIntensity={isSelected || hovered ? 2.0 : 1.0}
+          emissiveIntensity={isSelected || hovered ? 1.8 : isDimmed ? 0.2 : 0.8}
+          transparent
+          opacity={isDimmed ? 0.25 : 0.9}
         />
       </mesh>
 
-      {/* Outer Holographic Energy Shell */}
+      {/* Outer Holographic Geometric Shell */}
       <mesh ref={outerHaloRef}>
-        <icosahedronGeometry args={[0.85, 1]} />
+        <octahedronGeometry args={[0.8, 1]} />
         <meshBasicMaterial
           color={glowColor}
           wireframe
           transparent
-          opacity={isSelected ? 0.45 : hovered ? 0.35 : isConnectedToActive ? 0.2 : 0.08}
+          opacity={isSelected ? 0.45 : hovered ? 0.35 : isConnectedToFocused ? 0.18 : isDimmed ? 0.03 : 0.09}
           blending={THREE.AdditiveBlending}
         />
       </mesh>
 
-      {/* Point Light emitted by the node */}
+      {/* Local Point Light Source */}
       <pointLight
         color={baseColor}
-        intensity={isSelected ? 5 : hovered ? 3.5 : isConnectedToActive ? 2 : 1}
+        intensity={isSelected ? 4.5 : hovered ? 3.0 : isConnectedToFocused ? 1.8 : isDimmed ? 0.2 : 0.9}
         distance={6}
         decay={2}
       />
 
       {/* 3D Floating HUD Billboard */}
       <Html
-        position={[0, -1.2, 0]}
+        position={[0, -1.15, 0]}
         center
         distanceFactor={16}
         style={{ pointerEvents: 'none' }}
@@ -134,8 +142,8 @@ export const NeuralNode: React.FC<NeuralNodeProps> = ({ node }) => {
             flexDirection: 'column',
             alignItems: 'center',
             gap: '2px',
-            opacity: isSelected || hovered || isDirectlyActive ? 1 : isConnectedToActive ? 0.9 : 0.75,
-            transition: 'all 0.2s ease-out',
+            opacity: isSelected || hovered || isDirectlyActive ? 1 : isConnectedToFocused ? 0.85 : isDimmed ? 0.35 : 0.75,
+            transition: 'all 0.25s ease-out',
             whiteSpace: 'nowrap'
           }}
         >
@@ -149,12 +157,12 @@ export const NeuralNode: React.FC<NeuralNodeProps> = ({ node }) => {
               background: isSelected
                 ? 'rgba(59, 130, 246, 0.4)'
                 : hovered
-                ? 'rgba(12, 18, 32, 0.9)'
-                : 'rgba(8, 13, 22, 0.75)',
+                ? 'rgba(12, 18, 32, 0.92)'
+                : 'rgba(8, 13, 22, 0.8)',
               padding: '2px 8px',
               borderRadius: '4px',
-              border: `1px solid ${isSelected ? node.color : 'rgba(255, 255, 255, 0.12)'}`,
-              boxShadow: isSelected || hovered ? `0 0 10px ${node.glowColor}55` : 'none',
+              border: `1px solid ${isSelected ? node.color : isDimmed ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.12)'}`,
+              boxShadow: isSelected || hovered ? `0 0 12px ${node.glowColor}55` : 'none',
               textTransform: 'uppercase'
             }}
           >
@@ -164,15 +172,16 @@ export const NeuralNode: React.FC<NeuralNodeProps> = ({ node }) => {
             style={{
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: '7.5px',
-              letterSpacing: '0.06em',
+              letterSpacing: '0.08em',
               color: node.glowColor,
               textTransform: 'uppercase'
             }}
           >
-            ONLINE
+            {isSelected ? '● ACTIVE' : 'ONLINE'}
           </div>
         </div>
       </Html>
     </group>
   );
 };
+

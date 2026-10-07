@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Search, Terminal, ArrowRight, X, Volume2, Shield, Eye, Layers } from 'lucide-react';
+import { Search, Terminal, ArrowRight, X, Volume2, Shield, Eye, Layers, Map as MapIcon, Cpu } from 'lucide-react';
 import { useNeural } from '../../context/NeuralContext';
 import { NODES_DATA } from '../../data/nodes';
 
@@ -9,6 +9,7 @@ export const CommandPalette: React.FC = () => {
     toggleCommand,
     selectNodeById,
     setViewMode,
+    toggleMap,
     toggleSound,
     isSoundEnabled,
     toggleReducedMotion,
@@ -27,13 +28,13 @@ export const CommandPalette: React.FC = () => {
     }
   }, [isCommandOpen]);
 
-  // Command items list
+  // Exact commands per Section 20
   const commands = useMemo(() => {
     const list = [
-      { id: 'core', label: 'Go to AI Core', category: 'Navigation', icon: Terminal, action: () => selectNodeById('core') },
+      { id: 'core', label: 'Go to Core', category: 'Navigation', icon: Cpu, action: () => selectNodeById('core') },
       ...NODES_DATA.map(node => ({
-        id: node.id,
-        label: `Open ${node.label} (${node.title})`,
+        id: `inspect-${node.id}`,
+        label: `Inspect ${node.label}`,
         category: 'System Nodes',
         icon: ArrowRight,
         action: () => {
@@ -41,10 +42,10 @@ export const CommandPalette: React.FC = () => {
           selectNodeById(node.id);
         }
       })),
-      { id: 'arch', label: 'Open Architecture View', category: 'Views', icon: Layers, action: () => setViewMode('architecture') },
-      { id: 'about', label: 'Open About Statement', category: 'Views', icon: Eye, action: () => setViewMode('about') },
-      { id: 'contact', label: 'Open Contact / Exit', category: 'Views', icon: ArrowRight, action: () => setViewMode('contact') },
-      { id: 'sound', label: isSoundEnabled ? 'Disable Audio Soundscape' : 'Enable Audio Soundscape', category: 'Preferences', icon: Volume2, action: () => toggleSound() },
+      { id: 'arch', label: 'Open Architecture', category: 'Views', icon: Layers, action: () => setViewMode('architecture') },
+      { id: 'map', label: 'Open System Map', category: 'Views', icon: MapIcon, action: () => toggleMap(true) },
+      { id: 'about', label: 'Open About', category: 'Views', icon: Eye, action: () => setViewMode('about') },
+      { id: 'sound', label: isSoundEnabled ? 'Toggle Sound (Mute)' : 'Toggle Sound (Enable)', category: 'Preferences', icon: Volume2, action: () => toggleSound() },
       { id: 'motion', label: isReducedMotion ? 'Disable Reduced Motion' : 'Enable Reduced Motion', category: 'Accessibility', icon: Shield, action: () => toggleReducedMotion() },
     ];
 
@@ -54,9 +55,9 @@ export const CommandPalette: React.FC = () => {
       item.label.toLowerCase().includes(query.toLowerCase()) ||
       item.category.toLowerCase().includes(query.toLowerCase())
     );
-  }, [query, isSoundEnabled, isReducedMotion, selectNodeById, setViewMode, toggleSound, toggleReducedMotion]);
+  }, [query, isSoundEnabled, isReducedMotion, selectNodeById, setViewMode, toggleMap, toggleSound, toggleReducedMotion]);
 
-  // Keyboard navigation within list
+  // Keyboard navigation within list (Section 20)
   useEffect(() => {
     if (!isCommandOpen) return;
 
@@ -88,25 +89,25 @@ export const CommandPalette: React.FC = () => {
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        backgroundColor: 'rgba(3, 5, 10, 0.8)',
+        backgroundColor: 'rgba(3, 5, 10, 0.82)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'center',
         paddingTop: '15vh',
-        animation: 'fadeIn 0.15s ease-out'
+        animation: 'fadeInPalette 0.15s ease-out'
       }}
       onClick={() => toggleCommand(false)}
     >
       <div
         style={{
           width: '100%',
-          maxWidth: '560px',
-          background: 'rgba(12, 18, 32, 0.96)',
+          maxWidth: '540px',
+          background: 'rgba(8, 13, 22, 0.96)',
           border: '1px solid rgba(59, 130, 246, 0.35)',
-          borderRadius: '14px',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.85), 0 0 30px rgba(59, 130, 246, 0.2)',
+          borderRadius: '12px',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.85), 0 0 30px rgba(59, 130, 246, 0.18)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden'
@@ -116,18 +117,18 @@ export const CommandPalette: React.FC = () => {
         {/* Search input header */}
         <div
           style={{
-            padding: '14px 18px',
+            padding: '12px 16px',
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
+            gap: '10px',
             borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
           }}
         >
-          <Search size={18} color="#38BDF8" />
+          <Search size={16} color="#38BDF8" />
           <input
             ref={inputRef}
             type="text"
-            placeholder="Type a command or jump to system node..."
+            placeholder="Type a command (e.g. Inspect AI, Open Map)..."
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -140,7 +141,7 @@ export const CommandPalette: React.FC = () => {
               outline: 'none',
               color: '#F8FAFC',
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.9rem'
+              fontSize: '0.85rem'
             }}
           />
           <button
@@ -154,21 +155,21 @@ export const CommandPalette: React.FC = () => {
               alignItems: 'center'
             }}
           >
-            <X size={16} />
+            <X size={15} />
           </button>
         </div>
 
         {/* Command list */}
         <div
           style={{
-            maxHeight: '340px',
+            maxHeight: '320px',
             overflowY: 'auto',
-            padding: '8px'
+            padding: '6px'
           }}
         >
           {commands.length === 0 ? (
-            <div style={{ padding: '24px', textAlign: 'center', color: '#64748B', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.8rem' }}>
-              No matching system commands found
+            <div style={{ padding: '24px', textAlign: 'center', color: '#64748B', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem' }}>
+              No matching commands found
             </div>
           ) : (
             commands.map((cmd, index) => {
@@ -183,23 +184,23 @@ export const CommandPalette: React.FC = () => {
                   }}
                   onMouseEnter={() => setSelectedIndex(index)}
                   style={{
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    background: isSelected ? 'rgba(59, 130, 246, 0.18)' : 'transparent',
-                    border: isSelected ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid transparent',
+                    padding: '9px 12px',
+                    borderRadius: '7px',
+                    background: isSelected ? 'rgba(59, 130, 246, 0.16)' : 'transparent',
+                    border: isSelected ? '1px solid rgba(59, 130, 246, 0.35)' : '1px solid transparent',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     cursor: 'pointer',
-                    transition: 'background 0.15s ease-out'
+                    transition: 'background 0.1s ease-out'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Icon size={15} color={isSelected ? '#22D3EE' : '#94A3B8'} />
+                    <Icon size={14} color={isSelected ? '#22D3EE' : '#94A3B8'} />
                     <span
                       style={{
                         fontFamily: "'JetBrains Mono', monospace",
-                        fontSize: '0.82rem',
+                        fontSize: '0.78rem',
                         color: isSelected ? '#FFFFFF' : '#E2E8F0'
                       }}
                     >
@@ -209,7 +210,7 @@ export const CommandPalette: React.FC = () => {
                   <span
                     style={{
                       fontFamily: "'JetBrains Mono', monospace",
-                      fontSize: '0.65rem',
+                      fontSize: '0.62rem',
                       color: '#64748B',
                       textTransform: 'uppercase'
                     }}
@@ -225,22 +226,30 @@ export const CommandPalette: React.FC = () => {
         {/* Footer shortcuts hint */}
         <div
           style={{
-            padding: '8px 16px',
-            background: 'rgba(8, 13, 22, 0.8)',
+            padding: '8px 14px',
+            background: 'rgba(5, 9, 16, 0.8)',
             borderTop: '1px solid rgba(255, 255, 255, 0.06)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '0.68rem',
+            fontSize: '0.65rem',
             color: '#64748B'
           }}
         >
           <span>↑↓ Navigate</span>
-          <span>↵ Execute</span>
+          <span>↵ Select</span>
           <span>ESC Close</span>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeInPalette {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };
+

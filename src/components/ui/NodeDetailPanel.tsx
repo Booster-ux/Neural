@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Sparkles, Server, Database, Globe, RefreshCw, Shield, Layers, ArrowRight, CornerDownLeft } from 'lucide-react';
+import { X, Sparkles, Server, Database, Globe, RefreshCw, Shield, Layers, ArrowRight, CornerDownLeft, Eye } from 'lucide-react';
 import { useNeural } from '../../context/NeuralContext';
 import { NODES_DATA } from '../../data/nodes';
 
@@ -15,7 +15,7 @@ export const NodeDetailPanel: React.FC = () => {
 
   // Icon mapping
   const renderCategoryIcon = (category: string) => {
-    const size = 20;
+    const size = 18;
     const color = selectedNode.glowColor;
     switch (category) {
       case 'ai': return <Sparkles size={size} color={color} />;
@@ -42,51 +42,51 @@ export const NodeDetailPanel: React.FC = () => {
               bottom: 0,
               left: 0,
               right: 0,
-              maxHeight: '78vh',
+              maxHeight: '75vh',
               borderRadius: '20px 20px 0 0',
-              borderTop: `1px solid ${selectedNode.color}44`,
+              borderTop: `1px solid ${selectedNode.color}66`,
             }
           : {
-              top: '80px',
+              top: '84px',
               right: '24px',
               bottom: '24px',
-              width: '380px',
-              borderRadius: '16px',
-              border: `1px solid ${selectedNode.color}44`,
+              width: '360px',
+              borderRadius: '14px',
+              border: `1px solid rgba(255, 255, 255, 0.1)`,
             }),
-        background: 'rgba(12, 18, 32, 0.92)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        boxShadow: `0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px ${selectedNode.color}22`,
+        background: 'rgba(8, 13, 22, 0.94)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: `0 20px 50px rgba(0, 0, 0, 0.8), 0 0 25px ${selectedNode.color}22`,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        animation: isMobile ? 'slideUp 0.3s ease-out' : 'slideLeft 0.3s ease-out'
+        animation: isMobile ? 'slideUp 0.25s ease-out' : 'slideLeft 0.25s ease-out'
       }}
     >
       {/* Header bar */}
       <div
         style={{
-          padding: '16px 20px',
+          padding: '14px 18px',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: 'rgba(8, 13, 22, 0.6)'
+          background: 'rgba(12, 18, 32, 0.6)'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div
             style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              background: `${selectedNode.color}26`,
-              border: `1px solid ${selectedNode.color}66`,
+              width: '32px',
+              height: '32px',
+              borderRadius: '8px',
+              background: `${selectedNode.color}22`,
+              border: `1px solid ${selectedNode.color}55`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: `0 0 16px ${selectedNode.color}33`
+              boxShadow: `0 0 12px ${selectedNode.color}26`
             }}
           >
             {renderCategoryIcon(selectedNode.category)}
@@ -95,7 +95,7 @@ export const NodeDetailPanel: React.FC = () => {
             <div
               style={{
                 fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '0.68rem',
+                fontSize: '0.65rem',
                 letterSpacing: '0.12em',
                 color: selectedNode.glowColor,
                 display: 'flex',
@@ -109,19 +109,19 @@ export const NodeDetailPanel: React.FC = () => {
                   height: '5px',
                   borderRadius: '50%',
                   background: selectedNode.glowColor,
-                  boxShadow: `0 0 8px ${selectedNode.glowColor}`
+                  boxShadow: `0 0 6px ${selectedNode.glowColor}`
                 }}
               />
-              NODE STATUS // ONLINE
+              NODE // ONLINE
             </div>
             <h2
               style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: '1.25rem',
+                fontSize: '1.15rem',
                 fontWeight: 700,
-                letterSpacing: '0.04em',
+                letterSpacing: '0.02em',
                 color: '#F8FAFC',
-                margin: '2px 0 0 0'
+                margin: '1px 0 0 0'
               }}
             >
               {selectedNode.title}
@@ -147,77 +147,42 @@ export const NodeDetailPanel: React.FC = () => {
           onMouseLeave={(e) => (e.currentTarget.style.color = '#94A3B8')}
           title="Close panel (Esc)"
         >
-          <X size={18} />
+          <X size={17} />
         </button>
       </div>
 
       {/* Scrollable body content */}
       <div
         style={{
-          padding: '20px',
+          padding: '18px',
           overflowY: 'auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: '18px',
+          gap: '16px',
           flex: 1
         }}
       >
-        {/* Short description */}
+        {/* Concise description (Section 14) */}
         <p
           style={{
-            fontSize: '0.88rem',
-            color: '#E2E8F0',
-            lineHeight: 1.6,
+            fontSize: '0.85rem',
+            color: '#CBD5E1',
+            lineHeight: 1.55,
             margin: 0
           }}
         >
-          "{selectedNode.description}"
+          {selectedNode.description}
         </p>
-
-        {/* Technical stack tags */}
-        <div>
-          <div
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.7rem',
-              letterSpacing: '0.12em',
-              color: '#94A3B8',
-              marginBottom: '8px',
-              textTransform: 'uppercase'
-            }}
-          >
-            TECHNICAL LABELS
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-            {selectedNode.techLabels.map((tag) => (
-              <span
-                key={tag}
-                style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: '0.72rem',
-                  fontWeight: 600,
-                  color: selectedNode.glowColor,
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: `1px solid ${selectedNode.color}33`,
-                  padding: '3px 8px',
-                  borderRadius: '4px'
-                }}
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        </div>
 
         {/* Capabilities list */}
         <div>
           <div
             style={{
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.7rem',
+              fontSize: '0.68rem',
               letterSpacing: '0.12em',
               color: '#94A3B8',
-              marginBottom: '8px',
+              marginBottom: '6px',
               textTransform: 'uppercase'
             }}
           >
@@ -230,21 +195,21 @@ export const NodeDetailPanel: React.FC = () => {
               margin: 0,
               display: 'flex',
               flexDirection: 'column',
-              gap: '6px'
+              gap: '5px'
             }}
           >
             {selectedNode.capabilities.map((cap) => (
               <li
                 key={cap}
                 style={{
-                  fontSize: '0.82rem',
-                  color: '#CBD5E1',
+                  fontSize: '0.8rem',
+                  color: '#E2E8F0',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px'
                 }}
               >
-                <span style={{ color: selectedNode.glowColor, fontSize: '0.9rem' }}>▹</span>
+                <span style={{ color: selectedNode.glowColor, fontSize: '0.85rem' }}>▹</span>
                 <span>{cap}</span>
               </li>
             ))}
@@ -256,26 +221,27 @@ export const NodeDetailPanel: React.FC = () => {
           <div
             style={{
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.7rem',
+              fontSize: '0.68rem',
               letterSpacing: '0.12em',
               color: '#94A3B8',
-              marginBottom: '8px',
+              marginBottom: '6px',
               textTransform: 'uppercase'
             }}
           >
-            TECHNOLOGY STACK
+            STACK & STANDARDS
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
             {selectedNode.technologies.map((tech) => (
               <span
                 key={tech}
                 style={{
-                  fontSize: '0.78rem',
+                  fontSize: '0.74rem',
+                  fontFamily: "'JetBrains Mono', monospace",
                   color: '#F1F5F9',
-                  background: 'rgba(15, 23, 42, 0.8)',
+                  background: 'rgba(15, 23, 42, 0.75)',
                   border: '1px solid rgba(255, 255, 255, 0.08)',
-                  padding: '4px 10px',
-                  borderRadius: '6px'
+                  padding: '3px 8px',
+                  borderRadius: '5px'
                 }}
               >
                 {tech}
@@ -289,14 +255,14 @@ export const NodeDetailPanel: React.FC = () => {
           <div
             style={{
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.7rem',
+              fontSize: '0.68rem',
               letterSpacing: '0.12em',
               color: '#94A3B8',
-              marginBottom: '8px',
+              marginBottom: '6px',
               textTransform: 'uppercase'
             }}
           >
-            CONNECTED SYSTEMS
+            CONNECTED SYSTEMS ({connectedNodes.length})
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
             {connectedNodes.map((conn) => (
@@ -307,13 +273,13 @@ export const NodeDetailPanel: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '7px 10px',
+                  padding: '6px 9px',
                   background: 'rgba(15, 23, 42, 0.6)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
                   borderRadius: '6px',
                   color: '#E2E8F0',
                   fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: '0.72rem',
+                  fontSize: '0.7rem',
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.2s ease-out'
@@ -323,24 +289,24 @@ export const NodeDetailPanel: React.FC = () => {
                   e.currentTarget.style.color = '#FFFFFF';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.06)';
                   e.currentTarget.style.color = '#E2E8F0';
                 }}
               >
                 <span>{conn.label}</span>
-                <ArrowRight size={12} color={conn.glowColor} />
+                <ArrowRight size={11} color={conn.glowColor} />
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Footer action buttons */}
+      {/* Footer primary action (Section 14) */}
       <div
         style={{
-          padding: '16px 20px',
+          padding: '14px 18px',
           borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          background: 'rgba(8, 13, 22, 0.8)',
+          background: 'rgba(8, 13, 22, 0.85)',
           display: 'flex',
           flexDirection: 'column',
           gap: '8px'
@@ -348,31 +314,29 @@ export const NodeDetailPanel: React.FC = () => {
       >
         <button
           onClick={() => {
-            // Jump to the first connected node or cycle
             const nextNode = connectedNodes[0];
             if (nextNode) selectNodeById(nextNode.id);
           }}
           className="btn-neural btn-neural-highlight"
-          style={{ width: '100%', padding: '9px 14px' }}
+          style={{ width: '100%', padding: '8px 14px' }}
         >
-          <ArrowRight size={14} />
-          <span>EXPLORE CONNECTIONS</span>
+          <Eye size={13} />
+          <span>FOCUS SYSTEM CONNECTION</span>
         </button>
 
         <button
           onClick={returnToCore}
           className="btn-neural"
-          style={{ width: '100%', padding: '8px 14px' }}
+          style={{ width: '100%', padding: '7px 14px' }}
         >
-          <CornerDownLeft size={14} />
-          <span>RETURN TO CORE</span>
+          <CornerDownLeft size={13} />
+          <span>RETURN TO OVERVIEW</span>
         </button>
       </div>
 
-      {/* Inline styles for keyframe animations */}
       <style>{`
         @keyframes slideLeft {
-          from { opacity: 0; transform: translateX(30px); }
+          from { opacity: 0; transform: translateX(24px); }
           to { opacity: 1; transform: translateX(0); }
         }
         @keyframes slideUp {
@@ -383,3 +347,4 @@ export const NodeDetailPanel: React.FC = () => {
     </div>
   );
 };
+

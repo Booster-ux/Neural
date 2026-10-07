@@ -15,6 +15,7 @@ import { EasterEggModal } from './components/ui/EasterEggModal';
 import { CustomCursor } from './components/ui/CustomCursor';
 import { InitialHint } from './components/ui/InitialHint';
 import { Fallback2DView } from './components/ui/Fallback2DView';
+import { SystemInspector } from './components/ui/SystemInspector';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -80,6 +81,7 @@ const NeuralAppContent: React.FC = () => {
       {isBootComplete && (
         <>
           <NodeDetailPanel />
+          <SystemInspector />
           <CoreOverlay />
           <SystemMapModal />
           {viewMode === 'architecture' && <ArchitectureView />}

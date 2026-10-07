@@ -3,11 +3,10 @@ import { useNeural } from '../../context/NeuralContext';
 import { soundManager } from '../../services/soundService';
 
 const BOOT_ITEMS = [
-  { label: 'CORE', status: 'ONLINE', delay: 300 },
-  { label: 'NEURAL NETWORK', status: 'ONLINE', delay: 750 },
-  { label: 'DATABASE', status: 'ONLINE', delay: 1200 },
-  { label: 'API LAYER', status: 'ONLINE', delay: 1650 },
-  { label: 'SECURITY', status: 'ONLINE', delay: 2100 },
+  { label: 'NEURAL CORE', status: 'ONLINE', delay: 350 },
+  { label: 'GRAPH ENGINE', status: 'ONLINE', delay: 850 },
+  { label: 'DATA STREAM', status: 'ONLINE', delay: 1350 },
+  { label: 'SECURITY', status: 'ACTIVE', delay: 1850 },
 ];
 
 export const BootScreen: React.FC = () => {
@@ -35,8 +34,8 @@ export const BootScreen: React.FC = () => {
       setFadeOut(true);
       setTimeout(() => {
         completeBoot();
-      }, 500);
-    }, 2700);
+      }, 450);
+    }, 2500);
 
     return () => {
       itemTimers.forEach(clearTimeout);
@@ -51,7 +50,7 @@ export const BootScreen: React.FC = () => {
     setFadeOut(true);
     setTimeout(() => {
       completeBoot();
-    }, 200);
+    }, 180);
   };
 
   return (
@@ -74,7 +73,7 @@ export const BootScreen: React.FC = () => {
     >
       <div
         style={{
-          maxWidth: '420px',
+          maxWidth: '440px',
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
@@ -82,50 +81,76 @@ export const BootScreen: React.FC = () => {
           gap: '24px'
         }}
       >
-        {/* Title */}
+        {/* Minimal High-End Hero Branding (Section 11) */}
         <div style={{ textAlign: 'center' }}>
+          <div
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '0.72rem',
+              letterSpacing: '0.22em',
+              color: '#38BDF8',
+              marginBottom: '6px',
+              textTransform: 'uppercase'
+            }}
+          >
+            CONNECTED INTELLIGENCE
+          </div>
           <h1
             style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: '2.5rem',
+              fontSize: '2.8rem',
               fontWeight: 800,
-              letterSpacing: '0.35em',
+              letterSpacing: '0.25em',
               color: '#F8FAFC',
               margin: 0,
-              textShadow: '0 0 30px rgba(59, 130, 246, 0.6)',
-              textIndent: '0.35em'
+              textIndent: '0.25em',
+              textShadow: '0 0 35px rgba(59, 130, 246, 0.5)'
             }}
           >
             NEURAL
           </h1>
           <p
             style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '0.78rem',
-              letterSpacing: '0.2em',
-              color: '#38BDF8',
-              marginTop: '8px',
-              textTransform: 'uppercase'
+              fontSize: '0.84rem',
+              color: '#94A3B8',
+              lineHeight: 1.5,
+              marginTop: '10px',
+              maxWidth: '380px'
             }}
           >
-            INITIALIZING SYSTEM...
+            Explore the architecture behind intelligent digital systems.
           </p>
         </div>
 
-        {/* Diagnostic Boot Rows */}
+        {/* Diagnostic Boot Rows (Section 10) */}
         <div
           style={{
             width: '100%',
-            background: 'rgba(12, 18, 32, 0.85)',
+            background: 'rgba(8, 13, 22, 0.85)',
             border: '1px solid rgba(255, 255, 255, 0.08)',
             borderRadius: '10px',
-            padding: '20px 24px',
+            padding: '18px 22px',
             boxShadow: '0 12px 36px rgba(0,0,0,0.7)',
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px'
+            gap: '10px'
           }}
         >
+          <div
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '0.68rem',
+              color: '#64748B',
+              letterSpacing: '0.1em',
+              marginBottom: '4px',
+              display: 'flex',
+              justifyContent: 'space-between'
+            }}
+          >
+            <span>SYSTEM INITIALIZING</span>
+            <span>{progress}%</span>
+          </div>
+
           {BOOT_ITEMS.map((item, index) => {
             const isOnline = index < visibleItems;
             return (
@@ -136,25 +161,25 @@ export const BootScreen: React.FC = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: '0.8rem',
-                  opacity: isOnline ? 1 : 0.25,
-                  transition: 'opacity 0.25s ease-out'
+                  fontSize: '0.78rem',
+                  opacity: isOnline ? 1 : 0.2,
+                  transition: 'opacity 0.2s ease-out'
                 }}
               >
-                <span style={{ color: '#94A3B8', letterSpacing: '0.08em' }}>
+                <span style={{ color: '#CBD5E1', letterSpacing: '0.06em' }}>
                   {item.label}{' '}
-                  <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>
-                    {'.'.repeat(Math.max(2, 20 - item.label.length))}
+                  <span style={{ color: 'rgba(255, 255, 255, 0.12)' }}>
+                    {'.'.repeat(Math.max(2, 18 - item.label.length))}
                   </span>
                 </span>
                 <span
                   style={{
-                    color: isOnline ? '#22D3EE' : '#64748B',
+                    color: isOnline ? (item.status === 'ACTIVE' ? '#10B981' : '#22D3EE') : '#64748B',
                     fontWeight: 600,
-                    textShadow: isOnline ? '0 0 10px rgba(34, 211, 238, 0.5)' : 'none'
+                    textShadow: isOnline ? '0 0 10px rgba(34, 211, 238, 0.4)' : 'none'
                   }}
                 >
-                  {isOnline ? 'ONLINE' : 'CONNECTING'}
+                  {isOnline ? item.status : 'CONNECTING'}
                 </span>
               </div>
             );
@@ -164,10 +189,10 @@ export const BootScreen: React.FC = () => {
           <div
             style={{
               width: '100%',
-              height: '3px',
+              height: '2px',
               background: 'rgba(255, 255, 255, 0.08)',
               borderRadius: '2px',
-              marginTop: '12px',
+              marginTop: '10px',
               overflow: 'hidden'
             }}
           >
@@ -176,7 +201,7 @@ export const BootScreen: React.FC = () => {
                 width: `${progress}%`,
                 height: '100%',
                 background: 'linear-gradient(90deg, #3B82F6, #22D3EE)',
-                boxShadow: '0 0 10px #22D3EE',
+                boxShadow: '0 0 8px #22D3EE',
                 transition: 'width 0.3s ease-out'
               }}
             />
@@ -188,13 +213,13 @@ export const BootScreen: React.FC = () => {
           onClick={handleSkip}
           className="btn-neural"
           style={{
-            fontSize: '0.72rem',
-            padding: '6px 16px',
-            opacity: 0.75,
+            fontSize: '0.7rem',
+            padding: '6px 14px',
+            opacity: 0.7,
             transition: 'all 0.2s'
           }}
           onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.75')}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.7')}
         >
           SKIP INITIALIZATION [ESC]
         </button>
@@ -202,3 +227,4 @@ export const BootScreen: React.FC = () => {
     </div>
   );
 };
+

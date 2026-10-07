@@ -7,13 +7,17 @@ import { useNeural } from '../../context/NeuralContext';
 interface ParticlePath {
   start: THREE.Vector3;
   end: THREE.Vector3;
+  fromId: string;
+  toId: string;
   speed: number;
   offset: number;
   color: THREE.Color;
+  size: number;
+  pulsePhase: number;
 }
 
 export const DataParticles: React.FC = () => {
-  const { isReducedMotion, isMobile } = useNeural();
+  const { isReducedMotion, isMobile, selectedNode, activeNode } = useNeural();
   const pointsRef = useRef<THREE.Points>(null);
 
   // Map nodes for position lookup
@@ -26,40 +30,56 @@ export const DataParticles: React.FC = () => {
     return map;
   }, []);
 
-  // Build particle data paths
+  // Build particle data paths with varied speed, size and color
   const { particlePaths, totalCount } = useMemo(() => {
     const paths: ParticlePath[] = [];
-    const multiplier = isMobile ? 3 : 6;
+    const multiplier = isMobile ? 3 : 5;
 
     CONNECTIONS_DATA.forEach((conn) => {
       const start = nodesMap.get(conn.from);
       const end = nodesMap.get(conn.to);
       if (!start || !end) return;
 
-      const pCount = Math.max(2, Math.floor(conn.particleCount * (multiplier / 6)));
+      const pCount = Math.max(2, Math.floor(conn.particleCount * (multiplier / 5)));
       for (let i = 0; i < pCount; i++) {
+        const isPrimary = conn.type === 'primary';
+        const particleColor = isPrimary
+          ? (i % 2 === 0 ? new THREE.Color('#22D3EE') : new THREE.Color('#38BDF8'))
+          : conn.type === 'cross_cutting'
+          ? new THREE.Color('#34D399')
+          : new THREE.Color('#A78BFA');
+
         paths.push({
           start,
           end,
-          speed: conn.speed * (0.15 + Math.random() * 0.15),
-          offset: Math.random(),
-          color: new THREE.Color(i % 2 === 0 ? '#22D3EE' : '#8B5CF6')
+          fromId: conn.from,
+          toId: conn.to,
+          speed: conn.speed * (0.16 + (i * 0.04) % 0.12),
+          offset: (i / pCount) + Math.random() * 0.05,
+          color: particleColor,
+          size: 0.12 + (i % 3) * 0.04,
+          pulsePhase: Math.random() * Math.PI * 2
         });
       }
     });
 
-    // Core radiating pulses
-    NODES_DATA.forEach((node) => {
+    // Central Core radiating telemetry pulses to major systems
+    NODES_DATA.forEach((node, nIdx) => {
       const start = new THREE.Vector3(0, 0, 0);
       const end = new THREE.Vector3(...node.position);
-      const pCount = isMobile ? 2 : 4;
+      const pCount = isMobile ? 2 : 3;
+
       for (let i = 0; i < pCount; i++) {
         paths.push({
           start,
           end,
-          speed: 0.2 + Math.random() * 0.15,
-          offset: Math.random(),
-          color: new THREE.Color('#3B82F6')
+          fromId: 'core',
+          toId: node.id,
+          speed: 0.22 + (nIdx % 3) * 0.03,
+          offset: (i / pCount) + Math.random() * 0.1,
+          color: new THREE.Color(i % 2 === 0 ? '#38BDF8' : '#8B5CF6'),
+          size: 0.14,
+          pulsePhase: Math.random() * Math.PI
         });
       }
     });
@@ -92,10 +112,19 @@ export const DataParticles: React.FC = () => {
     const positionAttr = pointsRef.current.geometry.attributes.position as THREE.BufferAttribute;
     const array = positionAttr.array as Float32Array;
 
+    const focusedId = selectedNode?.id || (activeNode !== 'core' ? activeNode : null);
+
     for (let i = 0; i < totalCount; i++) {
       const path = particlePaths[i];
-      // Calculate interpolation progress (0 to 1 loop)
-      const progress = (time * path.speed + path.offset) % 1;
+      const isRouteActive = focusedId && (path.fromId === focusedId || path.toId === focusedId);
+      
+      // Speed multiplier on active routes
+      const speedMultiplier = isRouteActive ? 1.8 : 1.0;
+      // Calculate interpolation progress (0 to 1 loop with organic ease)
+      const rawProgress = (time * path.speed * speedMultiplier + path.offset) % 1;
+      
+      // Smooth sinusoidal packet movement
+      const progress = rawProgress;
 
       // Linear interpolation between start and end
       array[i * 3] = path.start.x + (path.end.x - path.start.x) * progress;
@@ -123,13 +152,14 @@ export const DataParticles: React.FC = () => {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={isMobile ? 0.12 : 0.16}
+        size={isMobile ? 0.11 : 0.14}
         vertexColors
         transparent
-        opacity={0.9}
+        opacity={selectedNode ? 0.95 : 0.85}
         blending={THREE.AdditiveBlending}
         depthWrite={false}
       />
     </points>
   );
 };
+

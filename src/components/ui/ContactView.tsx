@@ -7,12 +7,11 @@ export const ContactView: React.FC = () => {
   const { resetExperience, isMobile } = useNeural();
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  // Clearly marked placeholder credentials
   const contactInfo = {
-    name: 'YOUR NAME',
-    email: 'YOUR EMAIL',
-    github: 'YOUR GITHUB',
-    portfolio: 'YOUR PORTFOLIO'
+    name: 'OPERATOR // SYSTEM ARCHITECT',
+    email: 'contact@neural.systems',
+    github: 'github.com/neural-systems',
+    portfolio: 'neural.systems/architecture'
   };
 
   const handleCopy = (field: string, val: string) => {
@@ -32,76 +31,76 @@ export const ContactView: React.FC = () => {
               inset: '70px 16px 16px 16px',
             }
           : {
-              top: '90px',
+              top: '84px',
               left: '50%',
               transform: 'translateX(-50%)',
               width: '90%',
-              maxWidth: '680px',
-              maxHeight: 'calc(100vh - 120px)',
+              maxWidth: '640px',
+              maxHeight: 'calc(100vh - 110px)',
             }),
-        background: 'rgba(12, 18, 32, 0.94)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
+        background: 'rgba(8, 13, 22, 0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         border: '1px solid rgba(255, 255, 255, 0.1)',
         borderRadius: '16px',
-        padding: isMobile ? '20px' : '32px',
-        boxShadow: '0 24px 60px rgba(0,0,0,0.8), 0 0 35px rgba(34, 211, 238, 0.15)',
+        padding: isMobile ? '20px' : '28px 32px',
+        boxShadow: '0 24px 60px rgba(0,0,0,0.85), 0 0 35px rgba(34, 211, 238, 0.12)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '24px',
+        gap: '20px',
         overflowY: 'auto',
-        animation: 'fadeInScale 0.3s ease-out'
+        animation: 'fadeInScaleContact 0.25s ease-out'
       }}
     >
-      {/* Header */}
+      {/* End State Header (Section 39) */}
       <div>
         <div
           style={{
             fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '0.72rem',
-            letterSpacing: '0.15em',
+            fontSize: '0.68rem',
+            letterSpacing: '0.18em',
             color: '#22D3EE',
             textTransform: 'uppercase'
           }}
         >
-          COMMUNICATION INTERFACE // EXIT
+          COMMUNICATION MATRIX // DISPATCH
         </div>
         <h1
           style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: isMobile ? '1.8rem' : '2.4rem',
+            fontSize: isMobile ? '1.6rem' : '2.2rem',
             fontWeight: 800,
             color: '#F8FAFC',
-            margin: '8px 0 8px 0',
-            letterSpacing: '0.02em'
+            margin: '6px 0 6px 0',
+            letterSpacing: '0.01em'
           }}
         >
           SYSTEM READY.
         </h1>
         <p
           style={{
-            fontSize: '0.92rem',
+            fontSize: '0.9rem',
             color: '#CBD5E1',
-            lineHeight: 1.6,
+            lineHeight: 1.5,
             margin: 0
           }}
         >
-          "Every useful digital product begins with a system worth building."
+          "Everything is connected."
         </p>
       </div>
 
-      {/* Placeholder Links Card Grid */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      {/* Profile Placeholders Card Grid */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <div
           style={{
             fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '0.7rem',
+            fontSize: '0.68rem',
             letterSpacing: '0.12em',
             color: '#94A3B8',
             textTransform: 'uppercase'
           }}
         >
-          CONTACT // PROFILE PLACEHOLDERS
+          OPERATOR CONTACT CHANNELS
         </div>
 
         {/* Name */}
@@ -110,19 +109,19 @@ export const ContactView: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'rgba(8, 13, 22, 0.7)',
+            background: 'rgba(12, 18, 32, 0.65)',
             border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '10px',
-            padding: '12px 16px'
+            borderRadius: '8px',
+            padding: '10px 14px'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <User size={16} color="#38BDF8" />
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem', color: '#94A3B8' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <User size={15} color="#38BDF8" />
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.74rem', color: '#94A3B8' }}>
               OPERATOR
             </span>
           </div>
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.82rem', color: '#F8FAFC', fontWeight: 600 }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem', color: '#F8FAFC', fontWeight: 600 }}>
             {contactInfo.name}
           </span>
         </div>
@@ -134,27 +133,27 @@ export const ContactView: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'rgba(8, 13, 22, 0.7)',
+            background: 'rgba(12, 18, 32, 0.65)',
             border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '10px',
-            padding: '12px 16px',
+            borderRadius: '8px',
+            padding: '10px 14px',
             cursor: 'pointer',
             transition: 'border-color 0.2s'
           }}
           onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3B82F6')}
           onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)')}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Mail size={16} color="#8B5CF6" />
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem', color: '#94A3B8' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Mail size={15} color="#8B5CF6" />
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.74rem', color: '#94A3B8' }}>
               EMAIL
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.82rem', color: '#22D3EE' }}>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem', color: '#22D3EE' }}>
               {contactInfo.email}
             </span>
-            {copiedField === 'email' ? <Check size={14} color="#10B981" /> : <Send size={14} color="#64748B" />}
+            {copiedField === 'email' ? <Check size={13} color="#10B981" /> : <Send size={13} color="#64748B" />}
           </div>
         </div>
 
@@ -165,23 +164,23 @@ export const ContactView: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'rgba(8, 13, 22, 0.7)',
+            background: 'rgba(12, 18, 32, 0.65)',
             border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '10px',
-            padding: '12px 16px',
+            borderRadius: '8px',
+            padding: '10px 14px',
             cursor: 'pointer',
             transition: 'border-color 0.2s'
           }}
           onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#8B5CF6')}
           onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)')}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Github size={16} color="#A78BFA" />
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem', color: '#94A3B8' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Github size={15} color="#A78BFA" />
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.74rem', color: '#94A3B8' }}>
               GITHUB
             </span>
           </div>
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.82rem', color: '#E2E8F0' }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem', color: '#E2E8F0' }}>
             {contactInfo.github}
           </span>
         </div>
@@ -193,57 +192,65 @@ export const ContactView: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'rgba(8, 13, 22, 0.7)',
+            background: 'rgba(12, 18, 32, 0.65)',
             border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '10px',
-            padding: '12px 16px',
+            borderRadius: '8px',
+            padding: '10px 14px',
             cursor: 'pointer',
             transition: 'border-color 0.2s'
           }}
           onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#22D3EE')}
           onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)')}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Globe size={16} color="#22D3EE" />
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem', color: '#94A3B8' }}>
-              PORTFOLIO
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Globe size={15} color="#22D3EE" />
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.74rem', color: '#94A3B8' }}>
+              NETWORK
             </span>
           </div>
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.82rem', color: '#E2E8F0' }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem', color: '#E2E8F0' }}>
             {contactInfo.portfolio}
           </span>
         </div>
       </div>
 
-      {/* Actions */}
+      {/* Buttons: EXPLORE AGAIN & CONNECT (Section 39) */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          paddingTop: '16px',
+          paddingTop: '14px',
           gap: '12px'
         }}
       >
         <button
           onClick={resetExperience}
           className="btn-neural btn-neural-highlight"
-          style={{ padding: '10px 18px' }}
+          style={{ padding: '9px 16px' }}
         >
-          <RotateCcw size={14} />
+          <RotateCcw size={13} />
           <span>EXPLORE AGAIN</span>
         </button>
 
         <button
           onClick={() => handleCopy('email', contactInfo.email)}
           className="btn-neural btn-neural-primary"
-          style={{ padding: '10px 18px' }}
+          style={{ padding: '9px 16px' }}
         >
-          <Send size={14} />
+          <Send size={13} />
           <span>CONNECT</span>
         </button>
       </div>
+
+      <style>{`
+        @keyframes fadeInScaleContact {
+          from { opacity: 0; transform: ${isMobile ? 'translateY(16px)' : 'translate(-50%, -8px)'}; }
+          to { opacity: 1; transform: ${isMobile ? 'translateY(0)' : 'translate(-50%, 0)'}; }
+        }
+      `}</style>
     </div>
   );
 };
+

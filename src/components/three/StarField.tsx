@@ -11,26 +11,26 @@ export const StarField: React.FC<StarFieldProps> = ({ count }) => {
   const { isReducedMotion, isMobile } = useNeural();
   const pointsRef = useRef<THREE.Points>(null);
 
-  // Optimize particle count for mobile
+  // Controlled, high-aesthetic particle count
   const particleCount = useMemo(() => {
     if (count) return count;
-    return isMobile ? 350 : 900;
+    return isMobile ? 220 : 500;
   }, [count, isMobile]);
 
   const [positions, colors] = useMemo(() => {
     const pos = new Float32Array(particleCount * 3);
     const cols = new Float32Array(particleCount * 3);
     const colorPalette = [
-      new THREE.Color('#3B82F6'), // Blue
-      new THREE.Color('#8B5CF6'), // Violet
-      new THREE.Color('#22D3EE'), // Cyan
-      new THREE.Color('#94A3B8'), // Muted slate
-      new THREE.Color('#F8FAFC'), // Bright white
+      new THREE.Color('#1E293B'), // Very deep slate
+      new THREE.Color('#334155'), // Muted slate
+      new THREE.Color('#3B82F6'), // Subtle blue
+      new THREE.Color('#818CF8'), // Subtle indigo
+      new THREE.Color('#94A3B8'), // Faint white-gray
     ];
 
     for (let i = 0; i < particleCount; i++) {
-      // Spherical distribution around neural network
-      const radius = 12 + Math.random() * 45;
+      // Distant spherical distribution with generous spacing
+      const radius = 22 + Math.random() * 60;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
 
@@ -48,8 +48,8 @@ export const StarField: React.FC<StarFieldProps> = ({ count }) => {
 
   useFrame((_, delta) => {
     if (pointsRef.current && !isReducedMotion) {
-      pointsRef.current.rotation.y += delta * 0.02;
-      pointsRef.current.rotation.x += delta * 0.008;
+      pointsRef.current.rotation.y += delta * 0.01;
+      pointsRef.current.rotation.x += delta * 0.004;
     }
   });
 
@@ -70,13 +70,14 @@ export const StarField: React.FC<StarFieldProps> = ({ count }) => {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={isMobile ? 0.08 : 0.095}
+        size={isMobile ? 0.07 : 0.085}
         vertexColors
         transparent
-        opacity={0.65}
+        opacity={0.45}
         blending={THREE.AdditiveBlending}
         depthWrite={false}
       />
     </points>
   );
 };
+

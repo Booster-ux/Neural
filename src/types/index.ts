@@ -1,5 +1,9 @@
 export type ViewMode = 'system' | 'architecture' | 'about' | 'contact';
 
+export type CoreState = 'idle' | 'observing' | 'processing' | 'connected' | 'root_access';
+
+export type ConnectionType = 'primary' | 'secondary' | 'active' | 'cross_cutting';
+
 export interface TechNode {
   id: string;
   label: string;
@@ -8,16 +12,18 @@ export interface TechNode {
   position: [number, number, number];
   color: string;
   glowColor: string;
+  accentColor: string;
   description: string;
   capabilities: string[];
   technologies: string[];
   techLabels: string[];
   connections: string[]; // IDs of connected nodes
   metrics: {
-    throughput?: string;
-    latency?: string;
-    uptime?: string;
-    reliability?: string;
+    throughput: string;
+    latency: string;
+    uptime: string;
+    reliability: string;
+    load: string;
   };
 }
 
@@ -37,9 +43,11 @@ export interface ConnectionLink {
   id: string;
   from: string;
   to: string;
+  type: ConnectionType;
   color?: string;
   speed: number;
   particleCount: number;
+  description?: string;
 }
 
 export interface SystemStats {
@@ -51,3 +59,13 @@ export interface SystemStats {
   stability: string;
   throughput: string;
 }
+
+export interface NodeTelemetry {
+  nodeId: string;
+  load: number;
+  latency: number;
+  throughput: number;
+  packetsPerSec: number;
+  activeConnections: number;
+}
+

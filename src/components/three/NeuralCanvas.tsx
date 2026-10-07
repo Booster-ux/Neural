@@ -17,7 +17,7 @@ export const NeuralCanvas: React.FC = () => {
   return (
     <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
       <Canvas
-        camera={{ position: [0, 2, 14], fov: isMobile ? 65 : 55, near: 0.1, far: 1000 }}
+        camera={{ position: [0, 2.2, isMobile ? 15.5 : 13.5], fov: isMobile ? 62 : 52, near: 0.1, far: 1000 }}
         dpr={isMobile ? [1, 1.5] : [1, 2]}
         gl={{
           antialias: !isMobile,
@@ -26,16 +26,15 @@ export const NeuralCanvas: React.FC = () => {
         }}
         onCreated={({ gl, scene }) => {
           gl.setClearColor('#03050A', 1);
-          scene.fog = new THREE.FogExp2('#03050A', 0.025);
+          scene.fog = new THREE.FogExp2('#03050A', 0.022);
         }}
       >
         <CameraController />
         
-        {/* Cinematic Ambient and Key Lighting */}
-        <ambientLight intensity={0.4} color="#0E1B33" />
-        <directionalLight position={[10, 15, 10]} intensity={1.2} color="#8B5CF6" />
-        <directionalLight position={[-10, -10, -5]} intensity={0.8} color="#22D3EE" />
-        <pointLight position={[0, 0, 0]} intensity={2.5} color="#3B82F6" distance={20} />
+        {/* Controlled Ambient & Art-Directed Studio Lighting */}
+        <ambientLight intensity={0.5} color="#080F1F" />
+        <directionalLight position={[12, 16, 8]} intensity={1.1} color="#818CF8" />
+        <directionalLight position={[-12, -8, -6]} intensity={0.7} color="#22D3EE" />
 
         <Suspense fallback={null}>
           <StarField />
@@ -57,3 +56,4 @@ export const NeuralCanvas: React.FC = () => {
     </div>
   );
 };
+
